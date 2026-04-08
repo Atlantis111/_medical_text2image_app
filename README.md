@@ -1,7 +1,11 @@
 # ⽀持⽤⼾⽂件上传的图医学绘图小程序
 
 ## 具体效果
-<img width="466" height="941" alt="image" src="https://github.com/user-attachments/assets/8c14efac-b2fd-4e14-9135-624b1d38f1de" />
+<img width="681" height="1201" alt="image" src="https://github.com/user-attachments/assets/0b4f32eb-e7fb-48e9-80e4-892688bb70c5" />
+
+<img width="605" height="1230" alt="image" src="https://github.com/user-attachments/assets/c558e42f-063a-4c9c-9336-2d874c99593b" />
+
+
 
 ## 功能设计
 输入：
