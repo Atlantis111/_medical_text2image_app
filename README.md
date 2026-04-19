@@ -91,6 +91,7 @@ Celery Worker：后端异步任务执行器
 - 发现有用户新需求，则加载 Qwen3 -> 解析 PDF -> 释放显存 -> 加载 Qwen-Image -> 绘图 -> 释放显存。
 
 启动redis、Celery和FastAPI:
+```
 # 安装库
 pip install fastapi uvicorn celery redis python-multipart
 sudo apt install celery
@@ -110,17 +111,21 @@ python main.py
 # ssh -F /dev/null -L 8000:localhost:8000 -L 3000:localhost:3000 ubuntu@@你的服务器ip
 ssh -F /dev/null -L 8000:localhost:8000 -L 3000:localhost:3000 ubuntu@117.50.193.22
 使用本地浏览器访问该网址http://localhost:8000/docs
+```
 
 ## 3.7 前端编写
 前端部署：基于Next.js
 安装Node.js和相关图标库，并创建一个前端文件
+```
 # 安装nvm(Node.js的版本管理器)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source ~/.bashrc
 # 安装nvm install 20并验证是否升级成功
 nvm install 20
 node -v
-# 创建一个前端框架
+```
+创建一个前端框架
+```
 npx create-next-app@latest frontend --registry=https://registry.npmmirror.com --no-audit --yes
 # 启动前端框架，启动后，可以在本地电脑的http://localhost:3000访问
 cd frontend
@@ -136,7 +141,9 @@ npm install --registry=https://registry.npmmirror.com
 ulimit -n 65535
 # 在服务器上启动前端框架
 npm run dev
+```
 如果要在自己的电脑上测试仅前端的效果，请使用以下测试方法
+```
 # 请务必在自己本地的电脑设置该命令
 # 该命令只用于测试
 # 8000是后端端口，3000是前端Next.js端口
@@ -145,12 +152,16 @@ ssh -F /dev/null -L 8000:localhost:8000 -L 3000:localhost:3000 ubuntu@117.50.193
 # ssh连接后，在本地http://localhost:3000/访问应用前端
 # 运行结束后，服务器的./data/uploads路径下保存用户上传的图片，
 # ./data/output路径下保存模型生成的图片。同时，测试端可以看到输出结果
+```
 
 ## 3.8 公网链接：基于pm2启动进程，基于Nginx转发
 编译前端为速度更快的静态产物，并且通过进程管理工具让前端服务在后台24h运行
 安装库pm2
+```
 sudo npm install pm2 -g
+```
 启动pm2进程
+```
 # 清理进程
 pm2 delete all
 pm2 list
@@ -169,14 +180,16 @@ npm run build
 pm2 start npm --name "medical-web" -- start
 # 测试时，可以用logs命令查看进程的运行日志
 pm2 logs medical-worker --lines 100
-
+```
 安装Nginx库
+```
 sudo apt update
 sudo apt install nginx -y
+```
 配置Niginx代理
+```
 # 配置转发规则文件，代码如下
 sudo nano /etc/nginx/sites-available/medical_app
-
 # 转发规则配置文件的代码
 server {
     listen 80;
@@ -199,19 +212,20 @@ server {
         proxy_pass http://localhost:8000/output/;
     }
 }
-
+```
 启动Nginx代理
+```
 # 建立软链接激活配置
 sudo ln -s /etc/nginx/sites-available/medical_app /etc/nginx/sites-enabled/
 # 重启 Nginx
 sudo systemctl restart nginx
 # 启动后，在浏览器输入服务器公网IP，就可以使用应用。如果后续需要真实网址，需要去购买一个域名
 # http://117.50.193.22
-
+```
 
 
 # 4. 具体开发流程
-
+```
       ┌─────────────────────────────────────────────────────────┐
       │               前端：用户输入层(微信小程序)                │
       │      负责UI交互，收集用户自然语言、上传的文件以及四类配置项 │
@@ -231,7 +245,7 @@ sudo systemctl restart nginx
       │          模型推理：模型推理(Diffsynth + Qwen-Image)      │
       │数据集确定 → 数据集清洗 → 微调训练 → 调用大模型 → 返回推理结果│
       └─────────────────────────────────────────────────────────┘
-
+```
 
 # 5. 运行平台和库
 
@@ -240,6 +254,7 @@ sudo systemctl restart nginx
 
 ## 5.2 基础库安装
 安装python3并使python命令指向pthon3
+```
 sudo apt update && sudo apt upgrade -y
 sudo apt install python3 python3-pip python3-venv -y
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
@@ -248,7 +263,9 @@ wget https://repo.anaconda.com/archive/Anaconda3-2024.10-1-Linux-x86_64.sh
 bash Anaconda3-2024.10-1-Linux-x86_64.sh
 source ~/.bashrc
 conda --version
+```
 安装运行库
+```
 pip install peft accelerate datasets protobuf transformers
 pip install torch torchvision
 pip install --upgrade huggingface-hub
@@ -261,7 +278,7 @@ pip install git+https://github.com/huggingface/diffusers.git
 git clone https://github.com/modelscope/DiffSynth-Studio.git
 cd DiffSynth-Studio
 pip install -e .
-
+```
 
 # 6. 数据集收集与清洗
 
@@ -343,9 +360,6 @@ Category:Metabolic pathway diagrams
 链接：https://commons.wikimedia.org/wiki/Category:Signal_transduction_diagrams
 免疫系统模式图 (复杂的细胞互作网络)：Category:Diagrams of the immune system
 链接：https://commons.wikimedia.org/wiki/Category:Diagrams_of_the_immune_system
-
-
-# 7. 主要模块开发
 
 
 
