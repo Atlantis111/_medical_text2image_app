@@ -34,6 +34,7 @@
   2. 结合提炼的 summary、user_query 和系统预设的各类画风/密度指南，再次让 Qwen3-8B 输出JSON结构。
   3. 系统会强制在 Prompt 中加入 No text, no letters... 等反面提示词，确保底图纯净。
 - 输出 (Outputs): 一个包含结构化绘图计划的字典 ：
+```
 {
   "summary": "文献总结文本...",
   "prompt_bundle": {
@@ -45,8 +46,9 @@
     ]
   },
   "prompt": "完整的组合版 prompt 字符串"
-
 }
+```
+
 ## 3.3 无文字底图生成
 调用 Qwen-Image 模型。系统会根据前端传入的图片类型动态挂载对应的 LoRA 权重，渲染出一张纯净底图。
 - 输入 (Inputs):
@@ -284,22 +286,25 @@ pip install -e .
 
 ## 6.1 数据集调研
 要剔除分辨率过低、包含过多文字说明的图片。剔除折线图、柱状图、显微镜照片。
+
 ### 6.1.1 机制通路图
 这类图片强调分子间的相互作用、信号传导和细胞器功能。
 WikiPathways：https://academy.wikipathways.org/
 开放的生物学通路数据库，由科学社区持续更新。
 适用性：提供高质量的通路图，包含详细的通路描述、实体列表。
 Reactome：开源的、经过同行评审的生物学通路数据库。还可以考虑BioRender、FigDraw
+
 ### 6.1.2 实验流程图 & 技术路线图 
 PubMed Central Open Access Subset(PMC-OA):
 https://huggingface.co/datasets/axiong/pmc_oa_demo/viewer/default/train?sort%5Bcolumn%5D=image&sort%5Bdirection%5D=desc&sort%5Btransform%5D=width
 含了数以百万计的开源生物医学论文中的原始插图及其对应的图注
+
 ### 6.1.3 科普插图
 偏向3D渲染或精美的扁平化矢量图，要求生动具象。
 Servier Medical Art(SMART)：https://smart.servier.com/
+
 著名的开源医学插图库。提供大量高质量的细胞、解剖、器材等矢量元素和完整插图。
-维基共享资源 (Wikimedia Commons - Medical Illustrations)：
-维基百科旗下，包含海量版权开放的医学解剖、病理插图。
+维基共享资源 (Wikimedia Commons - Medical Illustrations)：维基百科旗下，包含海量版权开放的医学解剖、病理插图。
 
 ## 6.2 构建SFT训练集
 下载的图片全部转化为png格式
@@ -308,10 +313,12 @@ Servier Medical Art(SMART)：https://smart.servier.com/
 使用打标签脚本qwen3_fast_tragger.py对原始图片进行打标
 
 打标后的数据集格式如下：
+```
 {"prompt": "科普插图, 专业3D渲染, 英文, high density, 详细医学描述：该图展示了心脏壁的解剖结构，包括心外膜（由壁层和脏层心包组成）、心肌层（心肌组织）和心内膜层。心包腔位于壁层和脏层心包之间，内含少量液体以减少摩擦。图中清晰标注了各层结构，有助于理解心脏的组织层次和功能分区。", "image": "BlausenMedical2014_Blausen_0470_HeartWall.png"}
 {"prompt": "科普插图, 专业3D渲染, 中文, high density, 详细医学描述：该图像为人体脊柱的3D解剖示意图，重点突出颈椎和腰椎区域，通过放大镜特写展示颈椎椎体结构，用于科普脊柱解剖学知识。", "image": "BlausenMedical2014_Blausen_0618_LumbarSpine.png"}
 {"prompt": "科普插图, 扁平矢量插画, 英文, medium density, 详细医学描述：该图展示了尿道括约肌的解剖结构，包括膀胱肌肉、尿液、括约肌肌肉和尿道。右侧插图显示了人体腹部和盆腔区域，突出显示了膀胱和尿道的位置，用于说明尿道括约肌在控制排尿中的作用。", "image": "BlausenMedical2014_Urinary_Sphincter.png"}
 {"prompt": "科普插图, 扁平矢量插画, 中文, high density, 详细医学描述：该图展示了C4植物（如玉米）叶片的横切面结构，包括维管束鞘细胞、叶肉细胞、叶脉（木质部和韧皮部）、表皮细胞、机械组织等，用于说明C4光合作用的解剖学基础。", "image": "组织学示意图_C4_photosynthesis_is_less_complicated_vi.png"}
+```
 
 模型训练：
 将原始图片数据metadata文件存放在./data/raw_images路径下，训练脚本train_science_pop.sh
@@ -324,10 +331,12 @@ Servier Medical Art(SMART)：https://smart.servier.com/
 
 ## 6.3 构建SFT训练集
 模型的训练集基于约5000条SFT训练集，全部来自于维基百科。组成如下：
+
 ### 6.3.1 现代科普风格总图：1378张
 https://commons.wikimedia.org/wiki/Category:Images_from_Blausen_Medical_Communications
 Category:Images from Blausen Medical Communications
 这是目前维基上质量最统一的医学绘图风格的数据集，包含超过1000多张针对各种疾病和解剖结构的3D感插图。
+
 ### 6.3.2 人体解剖图：约1000张
 https://commons.wikimedia.org/wiki/Category:Medical_illustrations_by_Patrick_Lynch
 Category:Medical illustrations by Patrick Lynch
@@ -336,6 +345,7 @@ Category:Medical illustrations by Patrick Lynch
 链接：https://commons.wikimedia.org/wiki/Category:SVG_human_anatomy
 人体解剖示意图总汇 (包含多角度剖面)：Category:Human anatomy diagrams
 链接：https://commons.wikimedia.org/wiki/Category:Human_anatomy_diagrams
+
 ### 6.3.3 细胞与分子生物学：约1000张
 https://commons.wikimedia.org/wiki/Category:Cell_anatomy
 Category:Cell anatomy
@@ -345,12 +355,14 @@ Category:Cell anatomy
 链接：https://commons.wikimedia.org/wiki/Category:Cell_anatomy
 分子与细胞生物学图解 (大类聚合)：Category:Molecular and cellular biology diagrams
 链接：https://commons.wikimedia.org/wiki/Category:Molecular_and_cellular_biology_diagrams
+
 ### 6.3.4 组织学与病理学：约800张
 https://commons.wikimedia.org/wiki/Category:Metabolic_pathway_diagrams
 Category:Metabolic pathway diagrams
 另外未使用的备选数据：
 组织学示意图：Category:Histological schematic
 链接：https://commons.wikimedia.org/wiki/Category:Histological_schematic
+
 ### 6.3.5 生理机制与信号通路：约1000张
 https://commons.wikimedia.org/wiki/Category:Metabolic_pathway_diagrams
 Category:Metabolic pathway diagrams
