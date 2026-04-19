@@ -3,7 +3,9 @@
 # 1. 具体效果
 <img width="681" height="1201" alt="image" src="https://github.com/user-attachments/assets/0b4f32eb-e7fb-48e9-80e4-892688bb70c5" />
 
-<img width="605" height="1230" alt="image" src="https://github.com/user-attachments/assets/c558e42f-063a-4c9c-9336-2d874c99593b" />
+<img width="1280" height="957" alt="2e6887c7-ae47-4ad6-ae99-823047688939" src="https://github.com/user-attachments/assets/3efc2280-95b6-43d6-af02-2bb87c77d55f" />
+
+<img width="1280" height="964" alt="68cbe09a-b705-4a3b-a646-a7033693d616" src="https://github.com/user-attachments/assets/f31d91ae-5863-46a6-8c52-aa1ee12cdc17" />
 
 
 # 2. 功能设计
